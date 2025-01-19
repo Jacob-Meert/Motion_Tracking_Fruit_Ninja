@@ -14,14 +14,24 @@ def launchGame():
 
     background_color = (0,0,255)
 
-    while True:
+    running = True
+
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            screen.fill(background_color) 
 
+            # Check for KEYDOWN event inside the event loop
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    print("Space Pressed!")
+                    running = False  
+
+        # Fill the screen with the background color
+        screen.fill(background_color)
+
+        # Update the display
         pygame.display.flip()
-
     pygame.quit()
 
 launchGame()
