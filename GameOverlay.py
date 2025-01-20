@@ -19,7 +19,7 @@ def launchGame():
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     pygame.display.set_caption("Motion-Box")
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
 
     if not cap.isOpened():
         print("Error: Unable to access the camera")
@@ -67,7 +67,7 @@ def launchGame():
 
             try:
                 landmarks = results.pose_landmarks.landmark
-                getRightHandCoordinates(landmarks)
+                print(getRightHandCoordinates(landmarks))
             except AttributeError as e:
                 print(f"Landmark extraction failed: {e}")
 
