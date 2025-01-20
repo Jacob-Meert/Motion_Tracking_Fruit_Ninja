@@ -25,6 +25,10 @@ def launchGame():
         print("Error: Unable to access the camera")
         return
     
+    rightHand = FruitNinja.limbTracker(screen.get_width(), screen.get_height())
+    leftHand = FruitNinja.limbTracker(screen.get_width(), screen.get_height())
+    rightFoot = FruitNinja.limbTracker(screen.get_width(), screen.get_height())
+    leftFoot = FruitNinja.limbTracker(screen.get_width(), screen.get_height())
 
     Clock = pygame.time.Clock()
 
@@ -88,6 +92,15 @@ def launchGame():
             #update sprites at each tick
             sprites.update([getLeftHandCoordinates(landmarks),getRightHandCoordinates(landmarks), getLeftFootCoordinates(landmarks), getRightFootCoordinates(landmarks)])
             sprites.draw(screen)
+
+            rightHand.update(getRightHandCoordinates(landmarks))
+            rightHand.draw(screen)
+            rightFoot.update(getRightFootCoordinates(landmarks))
+            rightFoot.draw(screen)
+            leftHand.update(getLeftHandCoordinates(landmarks))
+            leftHand.draw(screen)
+            leftFoot.update(getLeftFootCoordinates(landmarks))
+            leftFoot.draw(screen)
 
                 # Update the display
             pygame.display.flip()
