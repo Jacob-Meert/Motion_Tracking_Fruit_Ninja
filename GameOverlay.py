@@ -63,6 +63,12 @@ def launchGame():
             image.flags.writeable = True
             image = cv2.cvtColor(image,cv2.COLOR_RGB2BGR)
 
+            try:
+                landmarks = results.pose_landmarks.landmark
+                getRightHandCoordinates(landmarks)
+            except AttributeError as e:
+                print(f"Landmark extraction failed: {e}")
+
             mp_drawing.draw_landmarks(image, results.pose_landmarks,mp_pose.POSE_CONNECTIONS)
 
             #Converts image from BGR to RGB because pygame uses RGB
@@ -93,6 +99,29 @@ def launchGame():
         
         cap.release()
         pygame.quit()
+
+def getRightHandCoordinates(landmarks):
+    finger = landmarks[mp_pose.PoseLandmark.RIGHT_INDEX.value].x
+    return(finger.x,finger.y)
+
+def getLeftHandCoordinates(landmarks):
+    finger = landmarks[mp_pose.PoseLandmark.LEFT_INDEX.value].x
+    return(finger.x,finger.y)
+
+def getRightFootCoordinates(landmarks):
+    foot = landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].x
+    return(foot.x,foot.y)
+
+def getLeftFootCoordinates(landmarks):
+    foot = landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].x
+    return(foot.x,foot.y)
+
+
+
+
+
+
+
 
 
 launchGame()
