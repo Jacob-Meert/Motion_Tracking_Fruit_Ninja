@@ -16,12 +16,10 @@ def launchGame():
 
     #initialize game and window
     pygame.init()
-    window_width = 640
-    window_height = 480
-    screen = pygame.display.set_mode((window_width, window_height))
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     pygame.display.set_caption("Motion-Box")
 
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
 
     if not cap.isOpened():
         print("Error: Unable to access the camera")
@@ -73,12 +71,12 @@ def launchGame():
             
             frame_surface = pygame.surfarray.make_surface(image)
 
-            frame_surface = pygame.transform.scale(frame_surface,(window_width,window_height))
+            frame_surface = pygame.transform.scale(frame_surface,(screen.get_width(),screen.get_height()))
             
             screen.blit(frame_surface,(0,0))
 
             if currentTime - lastSpawn > 3000:
-                sprites.add(FruitNinja.fruit(window_width, screen.get_height()))
+                sprites.add(FruitNinja.fruit(screen.get_width(), screen.get_height()))
                 lastSpawn = currentTime
 
             #update sprites at each tick
@@ -89,7 +87,7 @@ def launchGame():
             pygame.display.flip()
 
             #cap frame rate
-            Clock.tick(60)
+            Clock.tick(100)
 
         cap.release()
         pygame.quit()
