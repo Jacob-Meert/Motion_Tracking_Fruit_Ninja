@@ -86,7 +86,7 @@ def launchGame():
                 lastSpawn = currentTime
 
             #update sprites at each tick
-            sprites.update()
+            sprites.update([getLeftHandCoordinates(landmarks),getRightHandCoordinates(landmarks), getLeftFootCoordinates(landmarks), getRightFootCoordinates(landmarks)])
             sprites.draw(screen)
 
                 # Update the display
@@ -99,19 +99,19 @@ def launchGame():
         pygame.quit()
 
 def getRightHandCoordinates(landmarks):
-    finger = landmarks[mp_pose.PoseLandmark.RIGHT_INDEX.value].x
+    finger = landmarks[mp_pose.PoseLandmark.RIGHT_INDEX.value]
     return(finger.x,finger.y)
 
 def getLeftHandCoordinates(landmarks):
-    finger = landmarks[mp_pose.PoseLandmark.LEFT_INDEX.value].x
+    finger = landmarks[mp_pose.PoseLandmark.LEFT_INDEX.value]
     return(finger.x,finger.y)
 
 def getRightFootCoordinates(landmarks):
-    foot = landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].x
+    foot = landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value]
     return(foot.x,foot.y)
 
 def getLeftFootCoordinates(landmarks):
-    foot = landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].x
+    foot = landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value]
     return(foot.x,foot.y)
 
 
