@@ -15,7 +15,7 @@ class limbTracker(pygame.sprite.Sprite):
 
     def update(self, point):
         self.rect.x = int((1-point[0])*self.windowWidth)
-        self.rect.y = int(point[1]*self.windowWidth)
+        self.rect.y = int(point[1]*self.windowLength)
 
     def draw(self,screen):
         screen.blit(self.image,self.rect)
@@ -57,6 +57,6 @@ class fruit(pygame.sprite.Sprite):
 
     def checkCollisions(self, points):
         for point in points:
-            if self.rect.collidepoint((int((1-point[0])*self.windowWidth),int(point[1]*self.windowWidth))):
+            if self.rect.collidepoint((int((1-point[0])*self.windowWidth),int(point[1]*self.windowHeight))):
                 return True
         return False
