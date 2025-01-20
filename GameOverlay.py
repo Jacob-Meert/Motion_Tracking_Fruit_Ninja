@@ -86,7 +86,7 @@ def launchGame():
                 lastSpawn = currentTime
 
             #update sprites at each tick
-            sprites.update()
+            sprites.update([getLeftHandCoordinates(landmarks),getRightHandCoordinates(landmarks), getLeftFootCoordinates(landmarks), getRightFootCoordinates(landmarks)])
             sprites.draw(screen)
 
                 # Update the display
