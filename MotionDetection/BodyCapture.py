@@ -4,26 +4,27 @@ import numpy as np
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 
-def bodyCap():
+def get_frame():
+    """
+    Captures a single frame from the camera.
 
-    cap = cv2.VideoCapture(0, cv2.CAP_AVFOUNDATION)  # Default camera
+    Returns:
+        np.ndarray: The current frame in RGB format, or None if the camera is not accessible.
+    """
+    cap = cv2.VideoCapture(0)
     if not cap.isOpened():
-        print("Error: Camera not accessible.")
-        exit()
+        print("Error: Unable to access the camera.")
+        return None
 
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            print("Error: Frame capture failed. Exiting.")
-            break
-
-        # Display the frame
-        cv2.imshow("MotionBox", frame)
-
-        # Exit on 'q' key press
-        if cv2.waitKey(10) & 0xFF == ord('q'):
-            break
-
+    # Capture a single frame
+    ret, frame = cap.read()
     cap.release()
-    cv2.destroyAllWindows()
+
+    if not ret:
+        print("Error: Failed to capture frame.")
+        return None
+
+    # Convert the frame to RGB format
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    return frame
  

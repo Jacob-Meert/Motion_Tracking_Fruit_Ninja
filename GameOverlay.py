@@ -3,6 +3,8 @@ import cv2
 import numpy
 import random
 import time
+from MotionDetection.BodyCapture import get_frame
+import threading 
 
 def launchGame():
     #initialize game and window
