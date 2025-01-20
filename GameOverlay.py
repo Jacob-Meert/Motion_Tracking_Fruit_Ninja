@@ -4,11 +4,16 @@ import numpy as np
 import random
 import time
 import threading 
+import FruitNinja
 import mediapipe as mp
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 
 def launchGame():
+    sprites = pygame.sprite.Group()
+    lastSpawn = 0
+    currentTime = 0
+
     #initialize game and window
     pygame.init()
     window_width = 640
@@ -23,6 +28,8 @@ def launchGame():
         return
     
 
+    Clock = pygame.time.Clock()
+
     running = True
     with mp_pose.Pose(min_detection_confidence = 0.6, min_tracking_confidence = 0.6) as pose:
         while running:
@@ -35,6 +42,8 @@ def launchGame():
                     if event.key == pygame.K_SPACE:
                         print("Space Pressed!")
                         running = False  
+
+            currentTime = pygame.time.get_ticks()
 
             #capture frame
             ret, frame = cap.read()
@@ -68,9 +77,22 @@ def launchGame():
             
             screen.blit(frame_surface,(0,0))
 
-            # Update the display
+            if currentTime - lastSpawn > 3000:
+                sprites.add(FruitNinja.fruit(window_width))
+                lastSpawn = currentTime
+
+            #update sprites at each tick
+            sprites.update()
+            sprites.draw(screen)
+
+                # Update the display
             pygame.display.flip()
+
+            #cap frame rate
+            Clock.tick(60)
+        
         cap.release()
         pygame.quit()
+
 
 launchGame()
