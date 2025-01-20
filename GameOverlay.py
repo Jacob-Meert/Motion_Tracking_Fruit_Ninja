@@ -62,7 +62,7 @@ def launchGame():
         screen.blit(frame_surface,(0,0))
 
         if currentTime - lastSpawn > 3000:
-            sprites.add(FruitNinja.fruit(window_width))
+            sprites.add(FruitNinja.fruit(window_width, screen.get_height()))
             lastSpawn = currentTime
 
         #update sprites at each tick
@@ -74,7 +74,7 @@ def launchGame():
 
          #cap frame rate
         Clock.tick(60)
-        
+
     cap.release()
 
     pygame.quit()
