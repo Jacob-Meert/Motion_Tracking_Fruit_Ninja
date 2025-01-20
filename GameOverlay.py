@@ -19,7 +19,7 @@ def launchGame():
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     pygame.display.set_caption("Motion-Box")
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
 
     if not cap.isOpened():
         print("Error: Unable to access the camera")
@@ -63,7 +63,7 @@ def launchGame():
 
             try:
                 landmarks = results.pose_landmarks.landmark
-                getRightHandCoordinates(landmarks)
+                print(getRightHandCoordinates(landmarks))
             except AttributeError as e:
                 print(f"Landmark extraction failed: {e}")
 
@@ -99,19 +99,19 @@ def launchGame():
         pygame.quit()
 
 def getRightHandCoordinates(landmarks):
-    finger = landmarks[mp_pose.PoseLandmark.RIGHT_INDEX.value].x
+    finger = landmarks[mp_pose.PoseLandmark.RIGHT_INDEX.value]
     return(finger.x,finger.y)
 
 def getLeftHandCoordinates(landmarks):
-    finger = landmarks[mp_pose.PoseLandmark.LEFT_INDEX.value].x
+    finger = landmarks[mp_pose.PoseLandmark.LEFT_INDEX.value]
     return(finger.x,finger.y)
 
 def getRightFootCoordinates(landmarks):
-    foot = landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].x
+    foot = landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value]
     return(foot.x,foot.y)
 
 def getLeftFootCoordinates(landmarks):
-    foot = landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].x
+    foot = landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value]
     return(foot.x,foot.y)
 
 
