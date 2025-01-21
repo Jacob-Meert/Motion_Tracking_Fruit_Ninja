@@ -62,7 +62,7 @@ class fruit(pygame.sprite.Sprite):
 
         index = random.randint(0,7)
         self.image = pygame.image.load("Fruit_images/" + self.images[index]).convert_alpha()  # Load image with transparency
-        self.image = pygame.transform.scale(self.image, (self.sizing[index][0]*4/10,self.sizing[index][1]*4/10))
+        self.image = pygame.transform.scale(self.image, self.sizing[index])
         self.rect = self.image.get_rect()
 
         self.rect.x = random.randint(0, windowWidth - self.rect.width)
