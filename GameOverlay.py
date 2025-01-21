@@ -8,7 +8,6 @@ import FruitNinja
 import mediapipe as mp
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
-
 def launchGame():
     sprites = pygame.sprite.Group()
     lastSpawn = 0
@@ -68,11 +67,8 @@ def launchGame():
 
             try:
                 landmarks = results.pose_landmarks.landmark
-                print(getRightHandCoordinates(landmarks))
             except AttributeError as e:
                 print(f"Landmark extraction failed: {e}")
-
-            mp_drawing.draw_landmarks(image, results.pose_landmarks,mp_pose.POSE_CONNECTIONS)
 
             #Converts image from BGR to RGB because pygame uses RGB
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
