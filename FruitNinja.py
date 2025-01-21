@@ -75,6 +75,7 @@ class fruit(pygame.sprite.Sprite):
 
         self.alive = True
         
+        self.ding_sound = pygame.mixer.Sound('Sounds/collision_noise.mp3')
 
     def update(self, points):
         self.rect.x += self.xMotion
@@ -95,6 +96,7 @@ class fruit(pygame.sprite.Sprite):
             return False
 
         if self.checkCollisions(points):
+            self.ding_sound.play()
             self.kill()
             return True
 
