@@ -72,6 +72,8 @@ class fruit(pygame.sprite.Sprite):
 
         self.xMotion = np.cos(self.angle)*random.randint(40,45)
         self.yMotion = np.sin(self.angle)*random.randint(-55,-50)
+
+        self.alive = True
         
 
     def update(self, points):
@@ -80,11 +82,24 @@ class fruit(pygame.sprite.Sprite):
 
         self.yMotion += 1.5
 
-        if self.rect.y > self.windowHeight+60:
+        if self.rect.y > self.windowHeight+self.rect.height:
             self.kill()
+            return False 
+        
+        if self.rect.x > self.windowWidth + self.rect.width:
+            self.kill()
+            return False
+        
+        if self.rect.x < 0 - self.rect.width:
+            self.kill()
+            return False
 
         if self.checkCollisions(points):
             self.kill()
+            return True
+
+    def abort(self):
+        self.kill()
 
     def checkCollisions(self, points):
         for point in points:

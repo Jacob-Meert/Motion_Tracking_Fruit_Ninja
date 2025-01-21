@@ -28,7 +28,7 @@ def launchGame():
         'start.png',
     )
 
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
 
     if not cap.isOpened():
         print("Error: Unable to access the camera")
@@ -43,10 +43,15 @@ def launchGame():
     hold_start_time = None
     hold_duration = 2
 
+    score = 0
+    lives = 3
+
     with mp_pose.Pose(min_detection_confidence=0.6, min_tracking_confidence=0.6) as pose:
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    running = False
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     running = False
 
             # Capture frame
@@ -116,7 +121,18 @@ def launchGame():
                 right_foot = (0, 0, 0)
 
             # Update sprites at each tick
-            sprites.update([left_hand, right_hand, left_foot, right_foot])
+            for sprite in sprites:
+                curr = sprite.update([left_hand, right_hand, left_foot, right_foot])
+                if curr == True:
+                    score += 100
+                elif curr == False:
+                    lives -= 1
+                    if lives <= 0:
+                        gameStart = False
+                        for sprite in sprites:
+                            sprite.abort()
+                        lives =3
+
             sprites.draw(screen)
 
             # Update the display
