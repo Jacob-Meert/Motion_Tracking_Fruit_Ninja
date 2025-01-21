@@ -33,9 +33,9 @@ class limbTracker(pygame.sprite.Sprite):
             circle["alpha"] -= 5  # Gradually fade out
             # Gradually transition color to white
             circle["color"] = (
-                min(255, circle["color"][0] + 5),  # Increase red to 255
-                min(255, circle["color"][1] + 5),  # Increase green to 255
-                min(255, circle["color"][2] + 5)   # Increase blue to 255
+                min(255, circle["color"][0] + 10),  # Increase red to 255
+                min(255, circle["color"][1] + 10),  # Increase green to 255
+                min(255, circle["color"][2] + 10)   # Increase blue to 255
             )
 
         # Remove circles that have faded out or become too small

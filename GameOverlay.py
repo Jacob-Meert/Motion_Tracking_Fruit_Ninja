@@ -66,11 +66,8 @@ def launchGame():
 
             try:
                 landmarks = results.pose_landmarks.landmark
-                print(getRightHandCoordinates(landmarks))
             except AttributeError as e:
                 print(f"Landmark extraction failed: {e}")
-
-            mp_drawing.draw_landmarks(image, results.pose_landmarks,mp_pose.POSE_CONNECTIONS)
 
             #Converts image from BGR to RGB because pygame uses RGB
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
