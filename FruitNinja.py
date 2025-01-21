@@ -12,13 +12,44 @@ class limbTracker(pygame.sprite.Sprite):
         self.rect.y = 0
         self.windowWidth = width
         self.windowLength = length
+        self.trail = []
+        self.trail_length = 20
 
     def update(self, point):
         self.rect.x = int((1-point[0])*self.windowWidth)
         self.rect.y = int(point[1]*self.windowLength)
 
-    def draw(self,screen):
-        screen.blit(self.image,self.rect)
+        self.trail.append({
+                "x": self.rect.x,
+                "y": self.rect.y,
+                "radius": 20,  # Start as a large circle
+                "color": (255, 0, 0),  # Start as red
+                "alpha": 255  # Start fully opaque
+            })
+
+        # Update the trail to shrink, fade, and change color
+        for circle in self.trail:
+            circle["radius"] -= 1  # Gradually shrink the circle
+            circle["alpha"] -= 5  # Gradually fade out
+            # Gradually transition color to white
+            circle["color"] = (
+                min(255, circle["color"][0] + 5),  # Increase red to 255
+                min(255, circle["color"][1] + 5),  # Increase green to 255
+                min(255, circle["color"][2] + 5)   # Increase blue to 255
+            )
+
+        # Remove circles that have faded out or become too small
+        self.trail = [circle for circle in self.trail if circle["alpha"] > 0 and circle["radius"] > 0]
+
+    def draw(self, screen):
+    # Draw the trail
+        for circle in self.trail:
+            surface = pygame.Surface((circle["radius"] * 2, circle["radius"] * 2), pygame.SRCALPHA)
+            pygame.draw.circle(surface, (*circle["color"], circle["alpha"]), (circle["radius"], circle["radius"]), circle["radius"])
+            screen.blit(surface, (circle["x"] - circle["radius"], circle["y"] - circle["radius"]))
+
+            screen.blit(self.image, self.rect)
+
 
 class fruit(pygame.sprite.Sprite):
     images = ["Orange.png","Strawberry.png","Lemon.png","Grapes.png","Apple.png", "Banana.png", "Watermelon.png", "Pineapple.png"]
