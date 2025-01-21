@@ -18,7 +18,7 @@ def launchGame():
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     pygame.display.set_caption("Motion-Box")
 
-    startButton = Button(screen.get_width()//2 - screen.get_width()//8, screen.get_height()//2 - screen.get_height()//12, screen.get_width()//4, screen.get_height()//6, (255,0,0), 'START')
+    startButton = Button(screen.get_width()//2 - screen.get_width()//8, screen.get_height()//2, screen.get_width()//4, screen.get_height()//6, 'start.png')
 
     cap = cv2.VideoCapture(0)
 
@@ -125,22 +125,16 @@ def getLeftFootCoordinates(landmarks):
     return(foot.x,foot.y, foot.z)
 
 class Button:
-    def __init__(self, x, y, width, height, color=(255,0,0), text='Button', text_color=(0, 0, 0), font_size=24):
-        self.rect = pygame.Rect(x, y, width, height) 
-        self.color = color  
-        self.text = text  
-        self.text_color = text_color 
-        self.font = pygame.font.Font(None, font_size)
+    def __init__(self, x, y, width, height, imageName):
+        self.image = self.image = pygame.image.load("Fruit_images/" + imageName).convert_alpha()  # Load image with transparency
+        self.image = pygame.transform.scale(self.image, (width, height))
+        self.rect = self.image.get_rect()
 
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect)
-        text_surface = self.font.render(self.text, True, self.text_color)
-    
-        # Get the text's rectangle for positioning
-        text_rect = text_surface.get_rect(center=self.rect.center)
-        
-        # Blit the text onto the screen
-        screen.blit(text_surface, text_rect)
+        self.rect.x = x
+        self.rect.y = y
+
+    def draw(self, screen):       
+        screen.blit(self.image, self.rect)
 
     def is_clicked(self, hand):
         if self.rect.colliderect(hand):
