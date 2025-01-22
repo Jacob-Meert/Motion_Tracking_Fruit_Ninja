@@ -6,7 +6,6 @@ import time
 import FruitNinja
 import mediapipe as mp
 
-mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 
 
@@ -20,6 +19,14 @@ def launchGame():
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     pygame.display.set_caption("Motion-Box")
 
+    # Point Tracker
+    score = 0  # Initialize score
+    font = pygame.font.Font(None, 74)
+    
+    def draw_score():
+        score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+        screen.blit(score_text, (50, 50))
+        
     #create start button
     startButton = Button(
         screen.get_width() // 2 - screen.get_width() // 8,
