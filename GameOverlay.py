@@ -6,20 +6,28 @@ import time
 import FruitNinja
 import mediapipe as mp
 
-mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 
 
 def launchGame():
     sprites = pygame.sprite.Group()
     last_spawn_time = 0  # Track when the last fruit was spawned
-    spawn_interval = 2  # Spawn fruit every 2 seconds
-
+    initial_spawn_interval = 2.5
+    spawn_interval = initial_spawn_interval  # Spawn fruit every 2 seconds
+    min_spawn_interval = 0.5  # Minimum spawn interval
+    game_start_time = time.time()
+    
+    def calculate_spawn_interval():
+        elapsed_time = time.time() - game_start_time
+        return max(initial_spawn_interval - (elapsed_time // 30) * 0.2, min_spawn_interval)
+    
     # Initialize game and window
     pygame.init()
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     pygame.display.set_caption("Motion-Box")
 
+    
+    #create start button
     startButton = Button(
         screen.get_width() // 2 - screen.get_width() // 8,
         screen.get_height() // 2,
@@ -35,6 +43,10 @@ def launchGame():
         return
 
     rightHandTracker = FruitNinja.limbTracker(screen.get_width(), screen.get_height())
+    leftHandTracker = FruitNinja.limbTracker(screen.get_width(), screen.get_height())
+    rightFootTracker = FruitNinja.limbTracker(screen.get_width(), screen.get_height())
+    leftFootTracker = FruitNinja.limbTracker(screen.get_width(), screen.get_height())
+
     Clock = pygame.time.Clock()
 
     gameStart = False
@@ -78,14 +90,28 @@ def launchGame():
 
             # Track right hand
             if results.pose_landmarks:
-                hand_pos = getRightHandCoordinates(results.pose_landmarks.landmark)
-                rightHandTracker.update(hand_pos)
+                right_hand_pos = getRightHandCoordinates(results.pose_landmarks.landmark)
+                rightHandTracker.update(right_hand_pos)
                 rightHandTracker.draw(screen)
 
+                left_hand_pos = getLeftHandCoordinates(results.pose_landmarks.landmark)
+                leftHandTracker.update(left_hand_pos)
+                leftHandTracker.draw(screen)
+
+                right_foot_pos = getRightFootCoordinates(results.pose_landmarks.landmark)
+                rightFootTracker.update(right_foot_pos)
+                rightFootTracker.draw(screen)
+
+                left_foot_pos = getLeftFootCoordinates(results.pose_landmarks.landmark)
+                leftFootTracker.update(left_foot_pos)
+                leftFootTracker.draw(screen)
+
+
                 hand_screen_pos = (
-                    int((1 - hand_pos[0]) * screen.get_width()),
-                    int(hand_pos[1] * screen.get_height()),
+                    int((1 - right_hand_pos[0]) * screen.get_width()),
+                    int(right_hand_pos[1] * screen.get_height()),
                 )
+
 
             if not gameStart:
                 startButton.draw(screen)
@@ -98,6 +124,7 @@ def launchGame():
                         hold_start_time = None  # Reset the timer
                 else:
                     hold_start_time = None  # Reset the timer if the hand moves away
+            spawn_interval = calculate_spawn_interval()
 
             # Start spawning fruits when the game starts
             if gameStart:
