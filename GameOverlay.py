@@ -12,21 +12,21 @@ mp_pose = mp.solutions.pose
 def launchGame():
     sprites = pygame.sprite.Group()
     last_spawn_time = 0  # Track when the last fruit was spawned
-    spawn_interval = 2  # Spawn fruit every 2 seconds
-
+    initial_spawn_interval = 2.5
+    spawn_interval = initial_spawn_interval  # Spawn fruit every 2 seconds
+    min_spawn_interval = 0.5  # Minimum spawn interval
+    game_start_time = time.time()
+    
+    def calculate_spawn_interval():
+        elapsed_time = time.time() - game_start_time
+        return max(initial_spawn_interval - (elapsed_time // 30) * 0.2, min_spawn_interval)
+    
     # Initialize game and window
     pygame.init()
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     pygame.display.set_caption("Motion-Box")
 
-    # Point Tracker
-    score = 0  # Initialize score
-    font = pygame.font.Font(None, 74)
     
-    def draw_score():
-        score_text = font.render(f"Score: {score}", True, (255, 255, 255))
-        screen.blit(score_text, (50, 50))
-        
     #create start button
     startButton = Button(
         screen.get_width() // 2 - screen.get_width() // 8,
@@ -124,6 +124,7 @@ def launchGame():
                         hold_start_time = None  # Reset the timer
                 else:
                     hold_start_time = None  # Reset the timer if the hand moves away
+            spawn_interval = calculate_spawn_interval()
 
             # Start spawning fruits when the game starts
             if gameStart:
