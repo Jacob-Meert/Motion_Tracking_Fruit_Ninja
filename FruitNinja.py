@@ -5,8 +5,8 @@ import numpy as np
 class limbTracker(pygame.sprite.Sprite):
     def __init__(self, width, length):
         super().__init__()
-        self.image = pygame.Surface((25, 25))
-        self.image.fill((255,0,0))
+        self.image = pygame.Surface((25, 25), pygame.SRCALPHA)  # Enable transparency
+        self.image.fill((0, 0, 0, 0))  # Black color with 50% transparency (128 out of 255)
         self.rect = self.image.get_rect()
         self.rect.x = 0
         self.rect.y = 0
