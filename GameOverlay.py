@@ -20,6 +20,7 @@ def launchGame():
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     pygame.display.set_caption("Motion-Box")
 
+    #create start button
     startButton = Button(
         screen.get_width() // 2 - screen.get_width() // 8,
         screen.get_height() // 2,
@@ -35,6 +36,10 @@ def launchGame():
         return
 
     rightHandTracker = FruitNinja.limbTracker(screen.get_width(), screen.get_height())
+    leftHandTracker = FruitNinja.limbTracker(screen.get_width(), screen.get_height())
+    rightFootTracker = FruitNinja.limbTracker(screen.get_width(), screen.get_height())
+    leftFootTracker = FruitNinja.limbTracker(screen.get_width(), screen.get_height())
+
     Clock = pygame.time.Clock()
 
     gameStart = False
@@ -78,14 +83,28 @@ def launchGame():
 
             # Track right hand
             if results.pose_landmarks:
-                hand_pos = getRightHandCoordinates(results.pose_landmarks.landmark)
-                rightHandTracker.update(hand_pos)
+                right_hand_pos = getRightHandCoordinates(results.pose_landmarks.landmark)
+                rightHandTracker.update(right_hand_pos)
                 rightHandTracker.draw(screen)
 
+                left_hand_pos = getLeftHandCoordinates(results.pose_landmarks.landmark)
+                leftHandTracker.update(left_hand_pos)
+                leftHandTracker.draw(screen)
+
+                right_foot_pos = getRightFootCoordinates(results.pose_landmarks.landmark)
+                rightFootTracker.update(right_foot_pos)
+                rightFootTracker.draw(screen)
+
+                left_foot_pos = getLeftFootCoordinates(results.pose_landmarks.landmark)
+                leftFootTracker.update(left_foot_pos)
+                leftFootTracker.draw(screen)
+
+
                 hand_screen_pos = (
-                    int((1 - hand_pos[0]) * screen.get_width()),
-                    int(hand_pos[1] * screen.get_height()),
+                    int((1 - right_hand_pos[0]) * screen.get_width()),
+                    int(right_hand_pos[1] * screen.get_height()),
                 )
+
 
             if not gameStart:
                 startButton.draw(screen)
