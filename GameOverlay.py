@@ -28,6 +28,11 @@ def launchGame():
     min_spawn_interval = 0.5
     speed_of_change = 0.2
 
+    remove = False
+    velocityTrackRH = queue(coord(None))
+    velocityTrackRF = queue(coord(None))
+    velocityTrackLH = queue(coord(None))
+    velocityTrackLF = queue(coord(None))
     sprites = pygame.sprite.Group()
     last_spawn_time = 0  # Track when the last fruit was spawned
     initial_spawn_interval = 2.5
@@ -37,6 +42,7 @@ def launchGame():
     difficulty = None
 
     
+    lastTrack = 0
     
     def calculate_spawn_interval():
         elapsed_time = time.time() - game_start_time
@@ -152,6 +158,8 @@ def launchGame():
                     int((1 - right_hand_pos[0]) * screen.get_width()),
                     int(right_hand_pos[1] * screen.get_height()),
                 )
+            else:
+                hand_screen_pos = (0,0)
 
 
             if not gameStart:
@@ -215,16 +223,33 @@ def launchGame():
                 right_hand = getRightHandCoordinates(results.pose_landmarks.landmark)
                 left_foot = getLeftFootCoordinates(results.pose_landmarks.landmark)
                 right_foot = getRightFootCoordinates(results.pose_landmarks.landmark)
+
+
+                if pygame.time.get_ticks() >= lastTrack + 1:
+                    lastTrack == pygame.time.get_ticks()
+                    velocityTrackRH.add(coord(right_hand))
+                    velocityTrackRF.add(coord(right_foot))
+                    velocityTrackLH.add(coord(left_hand))
+                    velocityTrackLF.add(coord(left_foot))
+
+                    if remove == False:
+                        if len(velocityTrackLF) >= 10:
+                            remove = True
+                    else:
+                        velocityTrackRH.pop()
+                        velocityTrackRF.pop()
+                        velocityTrackLH.pop()
+                        velocityTrackLF.pop()
             else:
                 # Provide fallback values if landmarks are not detected
                 left_hand = (0, 0, 0)
                 right_hand = (0, 0, 0)
-                left_foot = (0, 0, 0)
+                left_foot = (0, 0, 0) 
                 right_foot = (0, 0, 0)
 
             # Update sprites at each tick
             for sprite in sprites:
-                curr = sprite.update([left_hand, right_hand, left_foot, right_foot])
+                curr = sprite.update([left_hand, right_hand, left_foot, right_foot,[(velocityTrackLH.head.value,velocityTrackLH.tail.value) , (velocityTrackRH.head.value,velocityTrackRH.tail.value), (velocityTrackLF.head.value,velocityTrackLF.tail.value), (velocityTrackRF.head.value,velocityTrackRF.tail.value)]])
                 if curr == True:
                     score += 100
                 elif curr == False:
@@ -298,4 +323,42 @@ class Button:
     
     def set_pressed(self, pressed):
         self.pressed = pressed
+        
+class queue:
+    def __init__(self, head):
+        self.head = head
+        self.tail = head
+    
+    def pop(self):
+        self.head = self.head.next
+
+    def add(self, node):
+        self.tail.next = node
+        self.tail = node
+
+    def __len__(self):
+        current = self.head
+        count = 0
+        while current:
+            current = current.next
+            count += 1
+        return count
+    
+    def __str__(self):
+        current = self.head
+        string = 'Begin -- \n'
+        while current:
+            string += str(current.value) + " -> "
+            current = current.next
+        return string
+
+    def __repr__(self):
+        return self.__str__()
+
+
+class coord:
+    def __init__(self, value, next = None):
+        self.value = value
+        self.next = next
+
 launchGame()

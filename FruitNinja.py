@@ -53,7 +53,14 @@ class limbTracker(pygame.sprite.Sprite):
 
 class fruit(pygame.sprite.Sprite):
     images = ["Orange.png","Strawberry.png","Lemon.png","Grapes.png","Apple.png", "Banana.png", "Watermelon.png", "Pineapple.png"]
-    sizing = [(190,190), (152,160), (152,160), (205,205), (190,190), (190,190), (220, 190), (222, 257)]
+    sizing = [(142, 142),
+ (114, 120),
+ (114, 120),
+ (153, 153),
+ (142, 142),
+ (142, 142),
+ (165, 142),
+ (166, 192)]
 
     def __init__(self, windowWidth, windowHeight):
         super().__init__()
@@ -68,7 +75,7 @@ class fruit(pygame.sprite.Sprite):
         self.rect.x = random.randint(0, windowWidth - self.rect.width)
         self.rect.y = windowHeight+50
       
-        self.angle = ((((self.rect.x / windowWidth) * 100) + 40) + random.randint(-15,15))*(np.pi/180)
+        self.angle = ((((self.rect.x / windowWidth) * 100) + 55) + random.randint(-15,15))*(np.pi/180)
 
         self.xMotion = np.cos(self.angle)*random.randint(40,45)
         self.yMotion = np.sin(self.angle)*random.randint(-55,-50)
@@ -104,7 +111,16 @@ class fruit(pygame.sprite.Sprite):
         self.kill()
 
     def checkCollisions(self, points):
-        for point in points:
-            if self.rect.collidepoint((int((1-point[0])*self.windowWidth),int(point[1]*self.windowHeight))):
-                return True
+        for i in range(len(points)-1):
+            if self.rect.collidepoint((int((1-points[i][0])*self.windowWidth),int(points[i][1]*self.windowHeight))):
+                if checkVelocity(points[4][i]):
+                    return True
         return False
+    
+def checkVelocity(points):
+    point1 = np.array([points[0][0], points[0][1]])
+    point2 = np.array([points[1][0], points[1][1]])
+    distance = np.linalg.norm(point2 - point1)
+    if distance >= 0.1:
+        return True
+    return False
