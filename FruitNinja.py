@@ -104,7 +104,18 @@ class fruit(pygame.sprite.Sprite):
         self.kill()
 
     def checkCollisions(self, points):
-        for point in points:
-            if self.rect.collidepoint((int((1-point[0])*self.windowWidth),int(point[1]*self.windowHeight))):
-                return True
+        for i in range(len(points)-1):
+            if self.rect.collidepoint((int((1-points[i][0])*self.windowWidth),int(points[i][1]*self.windowHeight))):
+                if checkVelocity(points[4][i]):
+                    return True
         return False
+    
+def checkVelocity(points):
+    print("here: " + str(points))
+    point1 = np.array([points[0][0], points[0][1]])
+    point2 = np.array([points[1][0], points[1][1]])
+    distance = np.linalg.norm(point2 - point1)
+    print("distance: " + str(distance))
+    if distance >= 0.2:
+        return True
+    return False
