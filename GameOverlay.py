@@ -1,7 +1,6 @@
 import pygame
 import cv2
 import numpy as np
-import random
 import time
 import FruitNinja
 import mediapipe as mp
@@ -23,7 +22,7 @@ def launchGame():
             "speed_of_change": 0.3
         }
     }
-    difficulty = None
+    difficulty = 1
     initial_spawn_interval = 2.5
     min_spawn_interval = 0.5
     speed_of_change = 0.2
@@ -33,6 +32,7 @@ def launchGame():
     velocityTrackRF = queue(coord(None))
     velocityTrackLH = queue(coord(None))
     velocityTrackLF = queue(coord(None))
+
     sprites = pygame.sprite.Group()
     last_spawn_time = 0  # Track when the last fruit was spawned
     initial_spawn_interval = 2.5
@@ -40,6 +40,7 @@ def launchGame():
     min_spawn_interval = 0.5  # Minimum spawn interval
     game_start_time = time.time()
     difficulty = None
+    settings = DIFFICULTY_SETTINGS[1]
 
     
     lastTrack = 0
@@ -163,6 +164,16 @@ def launchGame():
 
 
             if not gameStart:
+                if difficulty == 1:
+                    settings = DIFFICULTY_SETTINGS[1]
+                elif difficulty == 2:
+                    settings = DIFFICULTY_SETTINGS[2]
+
+                # Apply settings dynamically based on selected difficulty
+                initial_spawn_interval = settings["initial_spawn_interval"]
+                min_spawn_interval = settings["min_spawn_interval"]
+                speed_of_change = settings["speed_of_change"]
+                
                 normalButton.set_pressed(normal_held)
                 hardButton.set_pressed(hard_held)
                 
@@ -256,6 +267,8 @@ def launchGame():
                     lives -= 1
                     if lives <= 0:
                         gameStart = False
+                        
+
                         for sprite in sprites:
                             sprite.abort()
                         lives =3
@@ -323,7 +336,7 @@ class Button:
     
     def set_pressed(self, pressed):
         self.pressed = pressed
-        
+
 class queue:
     def __init__(self, head):
         self.head = head
