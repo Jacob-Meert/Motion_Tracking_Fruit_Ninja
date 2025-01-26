@@ -36,7 +36,7 @@ def launchGame():
         'start.png',
     )
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
 
     if not cap.isOpened():
         print("Error: Unable to access the camera")
