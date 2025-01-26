@@ -10,16 +10,37 @@ mp_pose = mp.solutions.pose
 
 
 def launchGame():
+    # Difficulty configurations
+    DIFFICULTY_SETTINGS = {
+        1: {  # Normal mode
+            "initial_spawn_interval": 2.5,
+            "min_spawn_interval": .7,
+            "speed_of_change": 0.2  # How much spawn interval decreases every 30 seconds
+        },
+        2: {  # Hard mode
+            "initial_spawn_interval": 1.5,
+            "min_spawn_interval": 0.3,
+            "speed_of_change": 0.3
+        }
+    }
+    difficulty = None
+    initial_spawn_interval = 2.5
+    min_spawn_interval = 0.5
+    speed_of_change = 0.2
+
     sprites = pygame.sprite.Group()
     last_spawn_time = 0  # Track when the last fruit was spawned
     initial_spawn_interval = 2.5
     spawn_interval = initial_spawn_interval  # Spawn fruit every 2 seconds
     min_spawn_interval = 0.5  # Minimum spawn interval
     game_start_time = time.time()
+    difficulty = None
+
+    
     
     def calculate_spawn_interval():
         elapsed_time = time.time() - game_start_time
-        return max(initial_spawn_interval - (elapsed_time // 30) * 0.2, min_spawn_interval)
+        return max(initial_spawn_interval - (elapsed_time // 30) * speed_of_change, min_spawn_interval)
     
     # Initialize game and window
     pygame.init()
@@ -30,12 +51,29 @@ def launchGame():
     #create start button
     startButton = Button(
         screen.get_width() // 2 - screen.get_width() // 8,
-        screen.get_height() // 2,
+        screen.get_height() - screen.get_height() // 3,
         screen.get_width() // 4,
         screen.get_height() // 6,
         'start.png',
         'start_pressed.png'
     )
+    normalButton = Button(
+        screen.get_width() - 4*(screen.get_width() // 5),
+        screen.get_height() - 1.7*(screen.get_height() //3),
+        screen.get_width() // 4,
+        screen.get_height() // 6,
+        'normal.png',
+        'normal_pressed.png'
+    )
+    hardButton = Button(
+        screen.get_width() - 2.3*(screen.get_width() // 5),
+        screen.get_height() - 1.7*(screen.get_height() //3),
+        screen.get_width() // 4,
+        screen.get_height() // 6,
+        'hard.png',
+        'hard_pressed.png'
+    )
+
 
     cap = cv2.VideoCapture(0)
 
@@ -55,6 +93,8 @@ def launchGame():
 
     hold_start_time = None
     hold_duration = 2
+    normal_held = True
+    hard_held = False
 
     score = 0
     lives = 3
@@ -115,9 +155,30 @@ def launchGame():
 
 
             if not gameStart:
+                normalButton.set_pressed(normal_held)
+                hardButton.set_pressed(hard_held)
+                
                 startButton.draw(screen, hand_screen_pos)
+                normalButton.draw(screen,hand_screen_pos)
+                hardButton.draw(screen,hand_screen_pos)
 
-                if results.pose_landmarks and startButton.is_hand_over(hand_screen_pos):
+                if results.pose_landmarks and normalButton.is_hand_over(hand_screen_pos):
+                    if hold_start_time is None:
+                        hold_start_time = time.time()  # Start the timer
+                    elif time.time() - hold_start_time >= hold_duration:
+                        normal_held = True  
+                        hard_held = False
+                        difficulty = 1 #Normal mode
+                        hold_start_time = None  # Reset the timer
+                elif results.pose_landmarks and hardButton.is_hand_over(hand_screen_pos):
+                    if hold_start_time is None:
+                        hold_start_time = time.time()  # Start the timer
+                    elif time.time() - hold_start_time >= hold_duration:
+                        hard_held = True  
+                        normal_held = False
+                        difficulty = 2 #hard mode
+                        hold_start_time = None  # Reset the timer
+                elif results.pose_landmarks and startButton.is_hand_over(hand_screen_pos): 
                     if hold_start_time is None:
                         hold_start_time = time.time()  # Start the timer
                     elif time.time() - hold_start_time >= hold_duration:
@@ -126,10 +187,22 @@ def launchGame():
                 else:
                     hold_start_time = None  # Reset the timer if the hand moves away
             
-            spawn_interval = calculate_spawn_interval()
 
             # Start spawning fruits when the game starts
             if gameStart:
+                if normal_held and difficulty == 1:
+                    settings = DIFFICULTY_SETTINGS[1]
+                elif hard_held and difficulty == 2:
+                    settings = DIFFICULTY_SETTINGS[2]
+
+                # Apply settings dynamically based on selected difficulty
+                initial_spawn_interval = settings["initial_spawn_interval"]
+                min_spawn_interval = settings["min_spawn_interval"]
+                speed_of_change = settings["speed_of_change"]
+
+                # Recalculate the spawn interval dynamically
+                spawn_interval = calculate_spawn_interval()
+                
                 current_time = time.time()
                 if current_time - last_spawn_time > spawn_interval:
                     fruit = FruitNinja.fruit(screen.get_width(), screen.get_height())
@@ -208,10 +281,11 @@ class Button:
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.pressed = False
 
     def draw(self, screen, hand_pos):
-        # Switch to hover image if hand is over the button
-        if self.is_hand_over(hand_pos):
+        # Switch to hover image if hand is over the button or if it's pressed
+        if self.pressed or self.is_hand_over(hand_pos):
             self.image = self.hover_image
         else:
             self.image = self.default_image
@@ -221,5 +295,7 @@ class Button:
 
     def is_hand_over(self, hand_pos):
         return self.rect.collidepoint(hand_pos)
-
+    
+    def set_pressed(self, pressed):
+        self.pressed = pressed
 launchGame()
