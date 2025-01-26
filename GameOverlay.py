@@ -34,6 +34,7 @@ def launchGame():
         screen.get_width() // 4,
         screen.get_height() // 6,
         'start.png',
+        'start_pressed.png'
     )
 
     cap = cv2.VideoCapture(1)
@@ -114,7 +115,7 @@ def launchGame():
 
 
             if not gameStart:
-                startButton.draw(screen)
+                startButton.draw(screen, hand_screen_pos)
 
                 if results.pose_landmarks and startButton.is_hand_over(hand_screen_pos):
                     if hold_start_time is None:
@@ -124,6 +125,7 @@ def launchGame():
                         hold_start_time = None  # Reset the timer
                 else:
                     hold_start_time = None  # Reset the timer if the hand moves away
+            
             spawn_interval = calculate_spawn_interval()
 
             # Start spawning fruits when the game starts
@@ -194,19 +196,30 @@ def getLeftFootCoordinates(landmarks):
 
 
 class Button:
-    def __init__(self, x, y, width, height, imageName):
-        self.image = pygame.image.load("Fruit_images/" + imageName).convert_alpha()  # Load image with transparency
-        self.image = pygame.transform.scale(self.image, (width, height))
+    def __init__(self, x, y, width, height, default_image, hover_image):
+        # Load default and hover images
+        self.default_image = pygame.image.load("Fruit_images/" + default_image).convert_alpha()
+        self.default_image = pygame.transform.scale(self.default_image, (width, height))
+        
+        self.hover_image = pygame.image.load("Fruit_images/" + hover_image).convert_alpha()
+        self.hover_image = pygame.transform.scale(self.hover_image, (width, height))
+        
+        self.image = self.default_image  # Set the default image initially
         self.rect = self.image.get_rect()
-
         self.rect.x = x
         self.rect.y = y
 
-    def draw(self, screen):
+    def draw(self, screen, hand_pos):
+        # Switch to hover image if hand is over the button
+        if self.is_hand_over(hand_pos):
+            self.image = self.hover_image
+        else:
+            self.image = self.default_image
+
+        # Draw the current image
         screen.blit(self.image, self.rect)
 
     def is_hand_over(self, hand_pos):
         return self.rect.collidepoint(hand_pos)
-
 
 launchGame()
