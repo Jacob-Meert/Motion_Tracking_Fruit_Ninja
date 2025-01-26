@@ -10,6 +10,7 @@ mp_pose = mp.solutions.pose
 
 
 def launchGame():
+    remove = False
     velocityTrackRH = queue(coord(None))
     velocityTrackRF = queue(coord(None))
     velocityTrackLH = queue(coord(None))
@@ -151,15 +152,17 @@ def launchGame():
                 right_foot = getRightFootCoordinates(results.pose_landmarks.landmark)
 
 
-                if pygame.time.get_ticks() >= lastTrack + 5:
-
+                if pygame.time.get_ticks() >= lastTrack + 1:
                     lastTrack == pygame.time.get_ticks()
                     velocityTrackRH.add(coord(right_hand))
                     velocityTrackRF.add(coord(right_foot))
                     velocityTrackLH.add(coord(left_hand))
                     velocityTrackLF.add(coord(left_foot))
 
-                    if len(velocityTrackLF) >= 5:
+                    if remove == False:
+                        if len(velocityTrackLF) >= 10:
+                            remove = True
+                    else:
                         velocityTrackRH.pop()
                         velocityTrackRF.pop()
                         velocityTrackLH.pop()
