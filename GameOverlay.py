@@ -34,19 +34,19 @@ def launchGame():
     velocityTrackLF = queue(coord(None))
 
     sprites = pygame.sprite.Group()
+    currentStart = 0
     last_spawn_time = 0  # Track when the last fruit was spawned
     initial_spawn_interval = 2.5
     spawn_interval = initial_spawn_interval  # Spawn fruit every 2 seconds
     min_spawn_interval = 0.5  # Minimum spawn interval
-    game_start_time = time.time()
     difficulty = None
     settings = DIFFICULTY_SETTINGS[1]
 
     
     lastTrack = 0
     
-    def calculate_spawn_interval():
-        elapsed_time = time.time() - game_start_time
+    def calculate_spawn_interval(currentStartTime):
+        elapsed_time = time.time() - currentStartTime
         return max(initial_spawn_interval - (elapsed_time // 30) * speed_of_change, min_spawn_interval)
     
     # Initialize game and window
@@ -202,7 +202,9 @@ def launchGame():
                         hold_start_time = time.time()  # Start the timer
                     elif time.time() - hold_start_time >= hold_duration:
                         gameStart = True  # Start the game
+                        currentStart = time.time()
                         hold_start_time = None  # Reset the timer
+
                 else:
                     hold_start_time = None  # Reset the timer if the hand moves away
             
@@ -220,7 +222,7 @@ def launchGame():
                 speed_of_change = settings["speed_of_change"]
 
                 # Recalculate the spawn interval dynamically
-                spawn_interval = calculate_spawn_interval()
+                spawn_interval = calculate_spawn_interval(currentStart)
                 
                 current_time = time.time()
                 if current_time - last_spawn_time > spawn_interval:
