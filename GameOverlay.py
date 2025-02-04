@@ -279,18 +279,19 @@ def launchGame():
                         
                         if score > high_score:
                             high_score = score
-
+                        lives =3
+                        score = 0
                         for sprite in sprites:
                             sprite.abort()
-                            lives =3
+                            
                 elif currfr == "bomb":
                     gameStart = False
                     if score > high_score:
                             high_score = score
                     for sprite in sprites:
                         sprite.abort()
-                        lives =3
-                        score =0
+                    lives =3
+                    score =0
 
             sprites.draw(screen)
             # Draw the labels (lives top-left, score top-right)
