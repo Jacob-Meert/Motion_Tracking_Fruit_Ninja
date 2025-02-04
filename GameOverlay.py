@@ -2,6 +2,7 @@ import pygame
 import cv2
 import numpy as np
 import time
+import random
 import FruitNinja
 import mediapipe as mp
 
@@ -229,7 +230,10 @@ def launchGame():
                 
                 current_time = time.time()
                 if current_time - last_spawn_time > spawn_interval:
-                    fruit = FruitNinja.bomb(screen.get_width(), screen.get_height())
+                    if random.randint(0,10) == 5:
+                        fruit = FruitNinja.bomb(screen.get_width(), screen.get_height())
+                    else:
+                        fruit = FruitNinja.fruit(screen.get_width(), screen.get_height())
                     sprites.add(fruit)
                     last_spawn_time = current_time
 
