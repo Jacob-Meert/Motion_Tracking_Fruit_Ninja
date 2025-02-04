@@ -48,7 +48,7 @@ def launchGame():
     
     def calculate_spawn_interval(currentStartTime):
         elapsed_time = time.time() - currentStartTime
-        return max(initial_spawn_interval - (elapsed_time // 30) * speed_of_change, min_spawn_interval)
+        return max(initial_spawn_interval - (elapsed_time // 15) * speed_of_change, min_spawn_interval)
     
     # Initialize game and window
     pygame.init()
