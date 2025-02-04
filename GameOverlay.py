@@ -54,6 +54,8 @@ def launchGame():
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     pygame.display.set_caption("Motion-Box")
 
+    labels = Labels(screen)
+    
     
     #create start button
     startButton = Button(
@@ -102,7 +104,7 @@ def launchGame():
     hold_duration = 2
     normal_held = True
     hard_held = False
-
+    high_score = 0
     score = 0
     lives = 3
 
@@ -181,6 +183,7 @@ def launchGame():
                 normalButton.draw(screen,hand_screen_pos)
                 hardButton.draw(screen,hand_screen_pos)
 
+                labels.draw_high_score(high_score)
                 if results.pose_landmarks and normalButton.is_hand_over(hand_screen_pos):
                     if hold_start_time is None:
                         hold_start_time = time.time()  # Start the timer
@@ -270,16 +273,24 @@ def launchGame():
                     if lives <= 0:
                         gameStart = False
                         
+                        if score > high_score:
+                            high_score = score
 
                         for sprite in sprites:
                             sprite.abort()
                         lives =3
+                        score =0
 
             sprites.draw(screen)
-
+            # Draw the labels (lives top-left, score top-right)
+            if gameStart:
+                # Only draw current lives/score if the game is running
+                labels.draw(lives, score)
+            else:
+                # If the game is not running, show the high score
+                labels.draw_high_score(high_score)
             # Update the display
             pygame.display.flip()
-
             # Cap the frame rate
             Clock.tick(100)
 
@@ -375,5 +386,27 @@ class coord:
     def __init__(self, value, next = None):
         self.value = value
         self.next = next
+
+class Labels:
+    def __init__(self,screen):
+        self.screen = screen
+        pygame.font.init()
+        self.font = pygame.font.SysFont(None,75)
+
+    def draw(self,lives,score):
+        lives_text = self.font.render(f"Lives: {lives}", True, (255, 0, 0))
+        self.screen.blit(lives_text, (20, 20))
+
+        score_text = self.font.render(f"Score: {score}", True, (255, 0, 0))
+        score_rect = score_text.get_rect()
+        # Place the top-right of this rectangle at (screen_width - 20, 20).
+        score_rect.topright = (self.screen.get_width() - 20, 20)
+        self.screen.blit(score_text, score_rect)
+    
+    def draw_high_score(self,high_score):
+        high_score_text = self.font.render(f"High Score: {high_score}", True, (255, 0, 0))
+        high_score_rect = high_score_text.get_rect()
+        high_score_rect.topright = (self.screen.get_width() - 20, 20)
+        self.screen.blit(high_score_text, high_score_rect)
 
 launchGame()
