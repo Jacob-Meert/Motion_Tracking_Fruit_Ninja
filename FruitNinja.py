@@ -53,14 +53,14 @@ class limbTracker(pygame.sprite.Sprite):
 
 class fruit(pygame.sprite.Sprite):
     images = ["Orange.png","Strawberry.png","Lemon.png","Grapes.png","Apple.png", "Banana.png", "Watermelon.png", "Pineapple.png"]
-    sizing = [(142, 142),
- (114, 120),
- (114, 120),
- (153, 153),
- (142, 142),
- (142, 142),
- (165, 142),
- (166, 192)]
+    sizing =   [(142, 142),
+                (114, 120),
+                (114, 120),
+                (153, 153),
+                (142, 142),
+                (142, 142),
+                (165, 142),
+                (166, 192)]
 
     def __init__(self, windowWidth, windowHeight):
         super().__init__()
@@ -81,6 +81,8 @@ class fruit(pygame.sprite.Sprite):
         self.yMotion = np.sin(self.angle)*random.randint(-55,-50)
 
         self.alive = True
+
+        self.missReturn = False
         
         self.ding_sound = pygame.mixer.Sound('Sounds/collision_noise.mp3')
 
@@ -92,23 +94,23 @@ class fruit(pygame.sprite.Sprite):
 
         if self.rect.y > self.windowHeight+self.rect.height:
             self.kill()
-            return False 
+            return self.missReturn 
         
         if self.rect.x > self.windowWidth + self.rect.width:
             self.kill()
-            return False
+            return self.missReturn
         
         if self.rect.x < 0 - self.rect.width:
             self.kill()
-            return False
+            return self.missReturn
 
         if self.checkCollisions(points):
             self.ding_sound.play()
-            self.kill()
-            return True
+            return self.abort()
 
     def abort(self):
         self.kill()
+        return True
 
     def checkCollisions(self, points):
         for i in range(len(points)-1):
@@ -117,10 +119,27 @@ class fruit(pygame.sprite.Sprite):
                     return True
         return False
     
+
+class bomb(fruit):
+    def __init__(self, windowWidth, windowHeight):
+        super().__init__(windowWidth, windowHeight)
+
+        self.image = pygame.image.load("Fruit_images/Bomb.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image, (170, 170))
+
+        self.ding_sound = pygame.mixer.Sound('Sounds/bomb_noise.mp3')
+
+        self.missReturn = "bomb-miss"
+
+    def abort(self):
+        self.kill()
+        return "bomb"
+
+
 def checkVelocity(points):
     point1 = np.array([points[0][0], points[0][1]])
     point2 = np.array([points[1][0], points[1][1]])
     distance = np.linalg.norm(point2 - point1)
-    if distance >= 0.1:
+    if distance >= 0.17:
         return True
     return False

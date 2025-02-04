@@ -82,7 +82,7 @@ def launchGame():
     )
 
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
 
     if not cap.isOpened():
         print("Error: Unable to access the camera")
@@ -226,7 +226,7 @@ def launchGame():
                 
                 current_time = time.time()
                 if current_time - last_spawn_time > spawn_interval:
-                    fruit = FruitNinja.fruit(screen.get_width(), screen.get_height())
+                    fruit = FruitNinja.bomb(screen.get_width(), screen.get_height())
                     sprites.add(fruit)
                     last_spawn_time = current_time
 
@@ -262,17 +262,20 @@ def launchGame():
 
             # Update sprites at each tick
             for sprite in sprites:
-                curr = sprite.update([left_hand, right_hand, left_foot, right_foot,[(velocityTrackLH.head.value,velocityTrackLH.tail.value) , (velocityTrackRH.head.value,velocityTrackRH.tail.value), (velocityTrackLF.head.value,velocityTrackLF.tail.value), (velocityTrackRF.head.value,velocityTrackRF.tail.value)]])
-                if curr == True:
+                currfr = sprite.update([left_hand, right_hand, left_foot, right_foot,[(velocityTrackLH.head.value,velocityTrackLH.tail.value) , (velocityTrackRH.head.value,velocityTrackRH.tail.value), (velocityTrackLF.head.value,velocityTrackLF.tail.value), (velocityTrackRF.head.value,velocityTrackRF.tail.value)]])
+                if currfr == True:
                     score += 100
-                elif curr == False:
+                elif currfr == False:
                     lives -= 1
                     if lives <= 0:
                         gameStart = False
-                        
-
                         for sprite in sprites:
                             sprite.abort()
+                            lives =3
+                elif currfr == "bomb":
+                    gameStart = False
+                    for sprite in sprites:
+                        sprite.abort()
                         lives =3
 
             sprites.draw(screen)
