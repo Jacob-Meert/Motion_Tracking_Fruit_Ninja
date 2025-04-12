@@ -8,8 +8,6 @@
 
 A motion-controlled Fruit Ninja style game that uses your webcam and body movements to slice fruits!
 
-![Motion Ninja Game](https://via.placeholder.com/800x400?text=Motion+Ninja+Game)
-
 ## 📋 Table of Contents
 - [Overview](#overview)
 - [Features](#features)
